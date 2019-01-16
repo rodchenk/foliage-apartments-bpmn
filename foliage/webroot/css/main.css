@@ -1,0 +1,39 @@
+body{
+	font-family: MontserratLight;
+}
+@font-face {
+    font-family: MontserratLight;
+    src: url(Montserrat-Light.ttf);
+}
+
+.text-lightGray{
+	color: #cecece !important;
+}
+.border-secondary-light,
+.btn-outline-secondary{
+	border: 1px #d4d4d4 solid !important;
+}
+.img-special{
+	transition: filter 250ms;
+	cursor: pointer;
+}
+.img-special:hover{
+	filter: brightness(1.25);
+}
+
+.embedded-daterangepicker .daterangepicker::before,
+.embedded-daterangepicker .daterangepicker::after {
+  display: none;
+}
+.embedded-daterangepicker .daterangepicker {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  float: left;
+  width: 100%;
+  margin-top: 0;
+}
+.embedded-daterangepicker .daterangepicker .drp-calendar {
+  width: 50%;
+  max-width: 50%;
+}
