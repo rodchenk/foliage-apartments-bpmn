@@ -38,6 +38,18 @@
                 </div>
             <?php endforeach; ?>
         </div>
-        <div class="col-3"></div>
+        <div class="col-3 p-2 border-left pr-4">
+            <div class="sticky-top" style="top: 10px">
+                <div class="input-group mb-1">
+                    <input type="text" class="pl-3 border-secondary-light text-dark form-control" placeholder="In Google Maps suchen">
+                    <div class="input-group-append">
+                        <button class="btn btn-warning pl-3 pr-3" type="button">
+                            <i class="fab fa-sistrix"></i>
+                        </button>
+                    </div>
+                </div>
+                <?= $this->Html->image('map.png', ['class' => 'img-fluid', 'style' => 'object-fit: cover; height: calc(100vh - 50px)'])?>
+            </div>
+        </div>
     </div>
 </div>

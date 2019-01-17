@@ -11,7 +11,6 @@
     <?= $this->Html->css(['bootstrap.min.css', 'all.min.css', 'main.css']) ?>
 
 
-    <?= $this->Html->script(['jquery.min.js', 'moment.min.js', 'daterange.min.js', 'main.js']) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
@@ -21,11 +20,11 @@
     <header class="position-absolute container-fluid border-bottom" style="height:50px;top:0;">
         <div class="row container-fluid mx-auto">
             <div class="col-3 pl-0">
-                <?= $this->Html->image('logo.png', ['class' => 'img-fluid', 'style' => 'height: 50px','url' => ['controller' => 'Start', 'action' => 'index']]); ?>
+                <?= $this->Html->image('logo.png', ['class' => 'img-fluid mt-1', 'style' => 'height: 40px','url' => ['controller' => 'Start', 'action' => 'index']]); ?>
             </div>
             <div class="col-6">
                 <div class="input-group input-group-sm m-2">
-                    <input type="text" class="bg-light pl-3 border-secondary-light text-dark form-control" placeholder="City, country or zip-code">
+                    <input type="text" class="bg-light pl-3 border-secondary-light text-dark form-control" placeholder="Apartment suchen">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary pl-3 pr-3" type="button">
                             <i class="fab fa-sistrix"></i>
@@ -33,11 +32,11 @@
                     </div>
                 </div>
             </div>
-            <div class="col-3 text-right">
+            <div class="col-3 text-right pr-0">
                 <a href="#" class="text-dark p-2">
                     Log in
                 </a>
-                <a href="#" class="btn btn-sm btn-dark m-2 mr-3">
+                <a href="#" class="btn btn-sm btn-dark mt-2 ml-2 mb-2 mr-0">
                     <i class="fas fa-sign-in-alt pr-2"></i>Sign up
                 </a>
             </div>

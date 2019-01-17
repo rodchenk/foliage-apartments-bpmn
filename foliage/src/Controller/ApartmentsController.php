@@ -14,6 +14,15 @@ class ApartmentsController extends AppController{
 
     /*user section start*/
     public function show($id = null){
+        if($this->request->is('post')){
+            $data = $this->request->getData();
+            if(!empty($data)){
+                $data['id'] = $id;
+                $this->sendApiRequest($data);
+                $this->set('data', $data);
+            }
+        }
+
         $this->viewBuilder()->setLayout('main');
         $this->viewBuilder()->setTemplate('show');
         $apartment = $this->Apartments->get($id, [
@@ -22,6 +31,44 @@ class ApartmentsController extends AppController{
 
         $this->set('apartment', $apartment);
     }
+
+    /**
+     * @author mischa
+     * @param $data array with the data to be sent to camunda engine
+     */
+    private function sendApiRequest($data){
+        $dataJSON = [
+            "variables" => [
+                "from" => [
+                    "value" => $data['from'], 
+                    "type" => "String"
+                ],
+                "to" => [
+                    "value" => $data['to'], 
+                    "type" => "String"
+                ],
+                "id" => [
+                    "value" => $data['id'], 
+                    "type" => "Integer"
+                ]
+            ]
+        ];
+
+        $data_string = json_encode($dataJSON);
+
+        $curl_req = curl_init();
+        curl_setopt($curl_req, CURLOPT_URL, 'http://localhost:8080/engine-rest/process-definition/foliage_apartments:1:26e63f01-1a75-11e9-9c41-0250f2000001/start');
+        curl_setopt($curl_req, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl_req, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($curl_req, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl_req, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Content-Length: ' . strlen($data_string)]);
+
+        $result = curl_exec($curl_req);
+        $this->set('response', json_decode($result));
+
+        curl_close($curl_req);
+    }
+
     /*user section end*/
 
     /**
