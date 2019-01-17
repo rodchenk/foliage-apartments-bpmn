@@ -16,20 +16,22 @@ public class FoliageServiceWorker implements ExternalTaskHandler{
 	@Override
 	public void execute(ExternalTask externalTask, ExternalTaskService externalTaskService) {
 		sLogger.info("2. External service has been started");
-		Map <String, Object> data = new HashMap<>();
-		Apartment apartment = new Apartment();
+		Map <String, Object> data = new HashMap<String, Object>();
 		
-    	Date lFromDate = parseToDate(externalTask.getVariable("from"));//Thu Jan 24 00:00:00 CET 2019
-    	Date lToDate = parseToDate(externalTask.getVariable("to"));
-    	int lID = externalTask.getVariable("id");
+		/*can be used later by accesing to Database*/
+
+		Apartment apartment = new Apartment();
+//    	Date lFromDate = parseToDate(externalTask.getVariable("from"));//Thu Jan 24 00:00:00 CET 2019
+//    	Date lToDate = parseToDate(externalTask.getVariable("to"));
+//    	int lID = externalTask.getVariable("id");
     	
-    	apartment.setID(lID);
-    	apartment.setFrom(lFromDate);
-    	apartment.setTo(lToDate);
+//    	apartment.setID(lID);
+//    	apartment.setFrom(lFromDate);
+//    	apartment.setTo(lToDate);
     	
     	data.put("available", apartment.isFree());
-    	data.put("from", lFromDate);
-    	data.put("to", lToDate);
+    	data.put("from", externalTask.getVariable("from"));
+    	data.put("to", externalTask.getVariable("to"));
     	
     	externalTaskService.complete(externalTask, data);		
 	}
@@ -39,6 +41,7 @@ public class FoliageServiceWorker implements ExternalTaskHandler{
 	 * @param str is Strin like 2019-01-24
 	 * @return parsed Date or null if date was incorrect
 	 */
+	@SuppressWarnings("unused")
 	private static Date parseToDate(Object str) {
 		String [] dateArray = ((String) str).split("-");
 		

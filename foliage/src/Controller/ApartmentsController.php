@@ -57,7 +57,7 @@ class ApartmentsController extends AppController{
         $data_string = json_encode($dataJSON);
 
         $curl_req = curl_init();
-        curl_setopt($curl_req, CURLOPT_URL, 'http://localhost:8080/engine-rest/process-definition/foliage_apartments:1:26e63f01-1a75-11e9-9c41-0250f2000001/start');
+        curl_setopt($curl_req, CURLOPT_URL, 'http://localhost:8080/engine-rest/process-definition/foliage_apartments:3:fa762c1a-1a8d-11e9-9c41-0250f2000001/start');
         curl_setopt($curl_req, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($curl_req, CURLOPT_POSTFIELDS, $data_string);
         curl_setopt($curl_req, CURLOPT_RETURNTRANSFER, true);
