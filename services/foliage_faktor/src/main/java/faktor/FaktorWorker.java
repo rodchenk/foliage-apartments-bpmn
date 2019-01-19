@@ -1,5 +1,7 @@
 package faktor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -8,6 +10,12 @@ import java.util.logging.Logger;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
 import org.camunda.bpm.client.task.ExternalTaskService;
+import org.camunda.bpm.dmn.engine.DmnDecision;
+import org.camunda.bpm.dmn.engine.DmnDecisionTableResult;
+import org.camunda.bpm.dmn.engine.DmnEngine;
+import org.camunda.bpm.dmn.engine.DmnEngineConfiguration;
+import org.camunda.bpm.engine.variable.VariableMap;
+import org.camunda.bpm.engine.variable.Variables;
 
 public class FaktorWorker implements ExternalTaskHandler{
 	
@@ -25,9 +33,7 @@ public class FaktorWorker implements ExternalTaskHandler{
 
 		days.forEach((key, value) -> {
 			Map<String, Boolean> temp = new HashMap<>(); 
-			String val = value.toString().replaceAll("\\{", "").replaceAll("\\}", "");;
-//			String val2 = val.replaceAll("\\{", "").replaceAll("\\}", "");
-//			String val3 = val2.replaceAll("\\}", "");
+			String val = value.toString().replaceAll("\\{", "").replaceAll("\\}", "");
 			String[]arrays = val.split(",");
 			for(int i = 0; i < arrays.length; i++) {
 				String [] anotherArray = arrays[i].split("=");
@@ -37,10 +43,46 @@ public class FaktorWorker implements ExternalTaskHandler{
 			map.put(key.toString(), temp);
 		});
 		
+		Map<String, Double> faktorMap = new HashMap<>();
+		
 		map.forEach((key, value) -> {
-			System.out.println(key + " | " + "Holiady: " + value.get("Holiday") + "; Weekend: " + value.get("Weekend"));
+			faktorMap.put(key, calcFaktor(value.get("Weekend"), value.get("Holiday")));
 		});
-
+		
+		faktorMap.forEach((key, value) -> {
+			System.out.println(key + " " + value + " price is " + value);
+		});
+		Map<String, Object> data = new HashMap<>();
+		
+		data.put("Faktor", faktorMap);
+		externalTaskService.complete(externalTask, data);
+	}
+	
+	/**
+	 * @author Mischa
+	 * @param weekend {@link Boolean} true if day is weekend, false otherwise
+	 * @param holiday {@link Boolean} true if day if holiday, false otherwise
+	 * @return {@link Double} Factor from DMN (between 1 and 1.4)
+	 */
+	private double calcFaktor(boolean weekend, boolean holiday) {
+		VariableMap variables = Variables.putValue("Weekend", weekend).putValue("Holiday", holiday);
+		DmnEngine dmnEngine = DmnEngineConfiguration.createDefaultDmnEngineConfiguration().buildEngine();
+		InputStream inputStream = FaktorDecision.class.getResourceAsStream("faktor_berechnen.xml");
+		
+		try {
+			DmnDecision decision = dmnEngine.parseDecision("FaktorBerechnen", inputStream);
+			DmnDecisionTableResult result = dmnEngine.evaluateDecisionTable(decision, variables);
+		
+			return result.getSingleResult().getSingleEntry();
+			
+		}finally {
+			try {
+				inputStream.close();
+			}
+			catch (IOException e) {
+				System.err.println("Could not close stream: " + e.getMessage());
+			}
+		}
 	}
 	
 }

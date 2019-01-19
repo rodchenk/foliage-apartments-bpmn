@@ -1,0 +1,1 @@
+java -cp foliage_faktor/target/faktor-0.0.1-SNAPSHOT.jar faktor.FaktorDecision
