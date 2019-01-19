@@ -1,11 +1,14 @@
 package weekend;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -19,6 +22,8 @@ import java.util.stream.Collectors;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
 import org.camunda.bpm.client.task.ExternalTaskService;
+import org.camunda.bpm.engine.variable.Variables;
+import org.camunda.bpm.engine.variable.value.ObjectValue;
 
 import com.google.gson.Gson;
 
@@ -54,10 +59,10 @@ public class WorkerService implements ExternalTaskHandler{
 			System.out.println("key: " + key + "; holiday: " + value.get("Holiday") + "; weekend: " + value.get("Weekend"));
 		});
 				
-		Map <String, Object> data = new TreeMap<>();
+		Map<String, Object> data = new TreeMap<>();
 		
-		data.put("Days", result);
-
+		data.put("Day", result);
+		
 		externalTaskService.complete(externalTask, data);
 	}
 	
