@@ -2,14 +2,14 @@
 <definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_0a3turl" name="DRD" namespace="http://camunda.org/schema/1.0/dmn">
   <decision id="FaktorBerechnen" name="Faktor berechnen">
     <decisionTable id="decisionTable_1">
-      <input id="input_1" label="Wochenendetag" camunda:inputVariable="Day.Weekend">
+      <input id="input_1" label="Wochenendetag" camunda:inputVariable="Weekend">
         <inputExpression id="inputExpression_1" typeRef="boolean">
-          <text>${Day.Weekend}</text>
+          <text>Weekend</text>
         </inputExpression>
       </input>
-      <input id="InputClause_0gcwgw7" label="Feiertag" camunda:inputVariable="Day.Holiday">
+      <input id="InputClause_0gcwgw7" label="Feiertag" camunda:inputVariable="Holiday">
         <inputExpression id="LiteralExpression_0nmlezv" typeRef="boolean">
-          <text>${Day.Holiday}</text>
+          <text>Holiday</text>
         </inputExpression>
       </input>
       <output id="output_1" label="Faktor" name="Faktor" typeRef="double" />

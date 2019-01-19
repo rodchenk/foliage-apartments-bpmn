@@ -3,78 +3,74 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\Core\Configure;
+
 /**
- * Apartments Controller
- *
+ * @author Mischa
  * @property \App\Model\Table\ApartmentsTable $Apartments
- *
  * @method \App\Model\Entity\Apartment[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class ApartmentsController extends AppController{
 
-    /*user section start*/
+    /**
+     * @author Mischa
+     * @param $id Integer. Default null, id von Apartment
+     * @property steuert Aufrufe von Camunda Rest API je nach dem, auf welchem Schritt man sich befindet
+     * @return void| setzt die Daten von Apartment(mit User) und von user eingegebene Daten ins Model
+     * @return API-bezogene Daten werden in SESSION gespeichert (inkl. processInstanceIdIn)
+     * @todo Refactoring, ausbauen von {ifelse}
+     */
     public function show($id = null){
         if($this->request->is('post')){
 
             $data = $this->request->getData();
 
-            if(isset($data['step']) && $data['step'] === 'Prüfen'){ //step 1
-                //start Process
+            if(isset($data['step']) && $data['step'] === 'Prüfen'){ //start Process
                 $data['id'] = $id;
                 $data['step'] = 'step1';
                 $this->sendApiRequest($data);
-
-            }elseif(isset($data['step2'])){
+            }elseif(isset($data['step2'])){ // get Verfügbarkeit des Apartments
                 $data['step'] = 'step2';
-                //step 2
-                //get Availability http://localhost:8080/engine-rest/history/variable-instance/593ede52-1aac-11e9-9c41-0250f2000001 - от куда взять айди?
-                //http://localhost:8080/engine-rest/process-instance просто лист процессов, ничего не дает 46d4b7fa-1b75-11e9-b149-0250f2000001
-                //http://localhost:8080/engine-rest/history/variable-instance?processInstanceIdIn=46d4b7fa-1b75-11e9-b149-0250f2000001 vot bl
                 $this->getAvailabilityWorkerResult();
-                
-            }elseif (isset($data['step3'])) {
+            }elseif (isset($data['step3'])) { // get Map mit Preisen when verfügbar ist
                 $data['step'] = 'step3';
-                //step 3
-                //get map with prices
+                $this->getAvailabilityWorkerResult();
+                $this->getFaktorWorkerResult();
             }
-            //schliesslich die daten speichern
+            
             $this->set('data', $data);
         }
-
-        // if($this->request->is('post')){
-        //     $data = $this->request->getData();
-        //     if(!empty($data)){
-        //         $data['id'] = $id;
-        //         $this->sendApiRequest($data);
-        //         $this->set('data', $data);
-        //     }
-        // }
-
+        /* allgemeine Logik START*/
         $this->viewBuilder()->setLayout('main');
         $this->viewBuilder()->setTemplate('show');
-        $apartment = $this->Apartments->get($id, [
-            'contain' => ['Users']
-        ]);
-
-        $this->set('apartment', $apartment);
+        $this->set('apartment', $this->Apartments->get($id, ['contain' => ['Users']]));
+        /* allgemeine Logik END*/
     }
 
+    /**
+     * @author Mischa
+     * @property Aufruf von Camunda Rest API http://localhost:8080/engine-rest/history/variable-instance
+     * @property mit GET-Parameter {@param processInstanceIdIn}
+     * @property processInstanceIdIn kommt aus Responce von ApartmentsController.sendApiRequest() als ID
+     * @return void| setzt das Map mit Faktoren ins Model
+     * @todo Refactor mit unterer Methode
+     */
+    private function getFaktorWorkerResult(){
+        //todo
+    }
+
+    /**
+     * @author Mischa
+     * @property Aufruf von Camunda Rest API http://localhost:8080/engine-rest/history/variable-instance
+     * @property mit GET-Parameter {@param processInstanceIdIn}
+     * @property processInstanceIdIn kommt aus Responce von ApartmentsController.sendApiRequest() als ID
+     */
     private function getAvailabilityWorkerResult(){
         $camunda = $this->request->session()->read('camunda');
-        $url = 'http://localhost:8080/engine-rest/history/variable-instance?processInstanceIdIn=' . $camunda->id;
+        $url = 'http://localhost:8080/engine-rest/history/variable-instance?variableName=available&processInstanceIdIn=' . $camunda->id;
         $content = file_get_contents($url, true);
 
         $json = json_decode($content);
-        $availability = 'not found';
-        for ($i=0; $i < sizeof($json); $i++) { 
-            $availability= $availability;
-
-            if($json[$i]->name === 'available'){
-                $available = $json[$i]->value;
-                break;
-            }
-        }
-
+        $available = $json[0]->name == 'available' ? $json[0]->value : false;
         $this->set('available', $available);
     }
 
@@ -101,19 +97,16 @@ class ApartmentsController extends AppController{
         ];
 
         $data_string = json_encode($dataJSON);
-
+        
+        $definition_key = 'foliage_apartments:1:6fae56a5-1c18-11e9-82f8-0250f2000001';
         $curl_req = curl_init();
-        curl_setopt($curl_req, CURLOPT_URL, 'http://localhost:8080/engine-rest/process-definition/foliage_apartments:3:fa762c1a-1a8d-11e9-9c41-0250f2000001/start');
+        curl_setopt($curl_req, CURLOPT_URL, 'http://localhost:8080/engine-rest/process-definition/'.$definition_key.'/start');
         curl_setopt($curl_req, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($curl_req, CURLOPT_POSTFIELDS, $data_string);
         curl_setopt($curl_req, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl_req, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Content-Length: ' . strlen($data_string)]);
 
         $result = curl_exec($curl_req);
-
-        // $this->set('response', );
-        //$_SESSION['camunda'] = json_decode($result);
-        //Configure::write('Camunda', json_decode($result));
 
         $session = $this->request->session();
         $session->write('camunda', json_decode($result)); 

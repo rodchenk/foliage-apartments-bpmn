@@ -12,6 +12,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -33,19 +34,19 @@ public class WorkerService implements ExternalTaskHandler{
 					
 		LocalDate start = LocalDate.parse((CharSequence) m.get("from"));
 		LocalDate end = LocalDate.parse((CharSequence) m.get("to"));
-		List<LocalDate> totalDates = new ArrayList<>();
+		List<LocalDate> totalDates = new ArrayList<LocalDate>();
 		while (!start.isAfter(end)) {
 		    totalDates.add(start);
 		    start = start.plusDays(1);
 		}
 		
-		Map<String, Map<String, Boolean>> result = new HashMap<>(); /* e.g. 2019-01-01 : {"weekend" : false, "holiday" : true} */
-		/*fill map with key: date (like 2019-01-01) and value (HashMap with key: holiday/weekend and value true/false)*/
+		Map<String, Map<String, Boolean>> result = new TreeMap<>(); /* e.g. 2019-01-01 : {"weekend" : false, "holiday" : true} */
+		/*fill map with key: date (like 2019-01-13) and value (HashMap with key: holiday/weekend and value true/false)*/
 		for(int i = 0; i < totalDates.size(); i++) {
-			String dateString = totalDates.get(i).toString();
-			result.put(dateString, new HashMap<String, Boolean>() {{
-		        put("Holiday", isHoliday(dateString));
-		        put("Weekend", isWeekend(dateString));
+			String date = totalDates.get(i).toString();
+			result.put(date, new HashMap<String, Boolean>() {{
+		        put("Holiday", isHoliday(date));
+		        put("Weekend", isWeekend(date));
 		    }});
 		}
 		
@@ -53,8 +54,10 @@ public class WorkerService implements ExternalTaskHandler{
 			System.out.println("key: " + key + "; holiday: " + value.get("Holiday") + "; weekend: " + value.get("Weekend"));
 		});
 				
-		Map <String, Object> data = new HashMap<>();
-				
+		Map <String, Object> data = new TreeMap<>();
+		
+		data.put("Days", result);
+
 		externalTaskService.complete(externalTask, data);
 	}
 	
@@ -76,7 +79,7 @@ public class WorkerService implements ExternalTaskHandler{
 			Map<String, String> swapped = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
 			
 			String day = swapped.get(str);
-			sLogger.info(day == null ? str + " is not a holiday" : str + " is " + swapped.get(str));
+			//sLogger.info(day == null ? str + " is not a holiday" : str + " is " + swapped.get(str));
 			return day != null;
 			
 		} catch (IOException e) {

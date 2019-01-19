@@ -14,9 +14,8 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_1v4qfui" sourceRef="Task_1m1zpxj" targetRef="ExclusiveGateway_1ji6sr2" />
     <bpmn:sequenceFlow id="SequenceFlow_0quunr3" name="Ja" sourceRef="ExclusiveGateway_1ji6sr2" targetRef="Task_0tg11yy">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">$(ok)</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${ok}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0wykym2" sourceRef="Task_0tg11yy" targetRef="Task_0lgi8o9" />
     <bpmn:endEvent id="EndEvent_163se0f" name="Abrechen">
       <bpmn:incoming>SequenceFlow_0gc71bj</bpmn:incoming>
     </bpmn:endEvent>
@@ -33,18 +32,20 @@
       <bpmn:outgoing>SequenceFlow_0yu450k</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_1ednoi0" name="Daten auf Besonderheiten prüfen &#10;(Feiertage o.Ä.)" camunda:type="external" camunda:topic="FeiertageAPI">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="Days">
+            <camunda:map />
+          </camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1no6njm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1x03x3y</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:businessRuleTask id="Task_1wnemab" name="Faktor &#10;berechnen" camunda:resultVariable="faktor" camunda:decisionRef="FaktorBerechnen" camunda:mapDecisionResult="singleEntry" camunda:decisionRefTenantId="1">
+    <bpmn:businessRuleTask id="Task_1wnemab" name="Faktor &#10;berechnen" camunda:type="external" camunda:topic="FaktorBerechnen">
       <bpmn:incoming>SequenceFlow_1x03x3y</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1wg74al</bpmn:outgoing>
     </bpmn:businessRuleTask>
-    <bpmn:scriptTask id="Task_1m1zpxj" name="Preis &#10;berechnen" camunda:resultVariable="Preis">
-      <bpmn:incoming>SequenceFlow_1wg74al</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1v4qfui</bpmn:outgoing>
-      <bpmn:script>${faktor * 10}</bpmn:script>
-    </bpmn:scriptTask>
     <bpmn:endEvent id="EndEvent_0sy6spk" name="Abrechen">
       <bpmn:incoming>SequenceFlow_08asr87</bpmn:incoming>
     </bpmn:endEvent>
@@ -60,28 +61,16 @@
     <bpmn:sequenceFlow id="SequenceFlow_08asr87" sourceRef="ExclusiveGateway_1r0x92o" targetRef="EndEvent_0sy6spk" />
     <bpmn:sendTask id="Task_0tg11yy" name="Gastgeber&#10;informieren" camunda:type="external" camunda:topic="Notify">
       <bpmn:incoming>SequenceFlow_0quunr3</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0wykym2</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0hl3c9b</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:userTask id="Task_0lgi8o9" name="Anfrage bestätigen">
-      <bpmn:incoming>SequenceFlow_0wykym2</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0b5i0k5</bpmn:outgoing>
+    <bpmn:endEvent id="EndEvent_12ydee2" name="Ende">
+      <bpmn:incoming>SequenceFlow_0hl3c9b</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Task_1m1zpxj" name="Bestätigung&#10;von User">
+      <bpmn:incoming>SequenceFlow_1wg74al</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1v4qfui</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0bdt2nv" name="bestätigt?" default="SequenceFlow_1ueku69">
-      <bpmn:incoming>SequenceFlow_0b5i0k5</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1oh44ou</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_1ueku69</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_0b5i0k5" name="ja/nein" sourceRef="Task_0lgi8o9" targetRef="ExclusiveGateway_0bdt2nv" />
-    <bpmn:endEvent id="EndEvent_12ydee2" name="Apartment &#10;reserviert">
-      <bpmn:incoming>SequenceFlow_1oh44ou</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1oh44ou" name="ja" sourceRef="ExclusiveGateway_0bdt2nv" targetRef="EndEvent_12ydee2">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${confirm}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:endEvent id="EndEvent_1mks0do" name="Absage">
-      <bpmn:incoming>SequenceFlow_1ueku69</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1ueku69" sourceRef="ExclusiveGateway_0bdt2nv" targetRef="EndEvent_1mks0do" />
+    <bpmn:sequenceFlow id="SequenceFlow_0hl3c9b" sourceRef="Task_0tg11yy" targetRef="EndEvent_12ydee2" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="foliage_apartments">
@@ -129,10 +118,6 @@
           <dc:Bounds x="976" y="287" width="12" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0wykym2_di" bpmnElement="SequenceFlow_0wykym2">
-        <di:waypoint x="1107" y="305" />
-        <di:waypoint x="1157" y="305" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_163se0f_di" bpmnElement="EndEvent_163se0f">
         <dc:Bounds x="914" y="198" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -151,9 +136,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BusinessRuleTask_1ma5krc_di" bpmnElement="Task_1wnemab">
         <dc:Bounds x="607" y="265" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ScriptTask_17q9pn7_di" bpmnElement="Task_1m1zpxj">
-        <dc:Bounds x="757" y="265" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0sy6spk_di" bpmnElement="EndEvent_0sy6spk">
         <dc:Bounds x="359" y="198" width="36" height="36" />
@@ -188,44 +170,18 @@
       <bpmndi:BPMNShape id="SendTask_0ji8txh_di" bpmnElement="Task_0tg11yy">
         <dc:Bounds x="1007" y="265" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_15dyjuh_di" bpmnElement="Task_0lgi8o9">
-        <dc:Bounds x="1157" y="265" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0bdt2nv_di" bpmnElement="ExclusiveGateway_0bdt2nv" isMarkerVisible="true">
-        <dc:Bounds x="1307" y="280" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1308" y="337" width="48" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0b5i0k5_di" bpmnElement="SequenceFlow_0b5i0k5">
-        <di:waypoint x="1257" y="305" />
-        <di:waypoint x="1307" y="305" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1266" y="287" width="32" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_12ydee2_di" bpmnElement="EndEvent_12ydee2">
-        <dc:Bounds x="1407" y="287" width="36" height="36" />
+        <dc:Bounds x="1167" y="287" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1399" y="330" width="53" height="27" />
+          <dc:Bounds x="1173" y="330" width="26" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1oh44ou_di" bpmnElement="SequenceFlow_1oh44ou">
-        <di:waypoint x="1357" y="305" />
-        <di:waypoint x="1407" y="305" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1378" y="287" width="8" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_1mks0do_di" bpmnElement="EndEvent_1mks0do">
-        <dc:Bounds x="1314" y="198" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1314" y="168" width="37" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="UserTask_1l0vefr_di" bpmnElement="Task_1m1zpxj">
+        <dc:Bounds x="757" y="265" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1ueku69_di" bpmnElement="SequenceFlow_1ueku69">
-        <di:waypoint x="1332" y="280" />
-        <di:waypoint x="1332" y="234" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0hl3c9b_di" bpmnElement="SequenceFlow_0hl3c9b">
+        <di:waypoint x="1107" y="305" />
+        <di:waypoint x="1167" y="305" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
