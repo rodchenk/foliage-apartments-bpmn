@@ -2,7 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-
+use Cake\Core\Configure;
 /**
  * Apartments Controller
  *
@@ -15,13 +15,40 @@ class ApartmentsController extends AppController{
     /*user section start*/
     public function show($id = null){
         if($this->request->is('post')){
+
             $data = $this->request->getData();
-            if(!empty($data)){
+
+            if(isset($data['step']) && $data['step'] === 'Prüfen'){ //step 1
+                //start Process
                 $data['id'] = $id;
+                $data['step'] = 'step1';
                 $this->sendApiRequest($data);
-                $this->set('data', $data);
+
+            }elseif(isset($data['step2'])){
+                $data['step'] = 'step2';
+                //step 2
+                //get Availability http://localhost:8080/engine-rest/history/variable-instance/593ede52-1aac-11e9-9c41-0250f2000001 - от куда взять айди?
+                //http://localhost:8080/engine-rest/process-instance просто лист процессов, ничего не дает 46d4b7fa-1b75-11e9-b149-0250f2000001
+                //http://localhost:8080/engine-rest/history/variable-instance?processInstanceIdIn=46d4b7fa-1b75-11e9-b149-0250f2000001 vot bl
+                $this->getAvailabilityWorkerResult();
+                
+            }elseif (isset($data['step3'])) {
+                $data['step'] = 'step3';
+                //step 3
+                //get map with prices
             }
+            //schliesslich die daten speichern
+            $this->set('data', $data);
         }
+
+        // if($this->request->is('post')){
+        //     $data = $this->request->getData();
+        //     if(!empty($data)){
+        //         $data['id'] = $id;
+        //         $this->sendApiRequest($data);
+        //         $this->set('data', $data);
+        //     }
+        // }
 
         $this->viewBuilder()->setLayout('main');
         $this->viewBuilder()->setTemplate('show');
@@ -30,6 +57,25 @@ class ApartmentsController extends AppController{
         ]);
 
         $this->set('apartment', $apartment);
+    }
+
+    private function getAvailabilityWorkerResult(){
+        $camunda = $this->request->session()->read('camunda');
+        $url = 'http://localhost:8080/engine-rest/history/variable-instance?processInstanceIdIn=' . $camunda->id;
+        $content = file_get_contents($url, true);
+
+        $json = json_decode($content);
+        $availability = 'not found';
+        for ($i=0; $i < sizeof($json); $i++) { 
+            $availability= $availability;
+
+            if($json[$i]->name === 'available'){
+                $available = $json[$i]->value;
+                break;
+            }
+        }
+
+        $this->set('available', $available);
     }
 
     /**
@@ -64,8 +110,13 @@ class ApartmentsController extends AppController{
         curl_setopt($curl_req, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Content-Length: ' . strlen($data_string)]);
 
         $result = curl_exec($curl_req);
-        $this->set('response', json_decode($result));
 
+        // $this->set('response', );
+        //$_SESSION['camunda'] = json_decode($result);
+        //Configure::write('Camunda', json_decode($result));
+
+        $session = $this->request->session();
+        $session->write('camunda', json_decode($result)); 
         curl_close($curl_req);
     }
 

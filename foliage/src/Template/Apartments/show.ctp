@@ -1,5 +1,7 @@
 <?= $this->Html->css(['daterange.css']) ?>
 <?= $this->Html->script(['jquery.min.js', 'moment.min.js', 'daterange.min.js', 'main.js']) ?>
+
+<?= $this->Form->create($apartment, ['action' => 'show', 'type' => 'post']) ?>
 <div class="container-fluid mt-4">
 	<div class="row">
 		<div class="col-6">
@@ -30,7 +32,6 @@
 
 			<div class="mt-3">
 				<span class="text-secondary">Wann wollen Sie einreisen?</span>
-				<?= $this->Form->create($apartment, ['action' => 'show', 'type' => 'post']) ?>
 				<div class="row">
 	  				<div class="container">
 		    			<input id="daterangepicker1" type="hidden">
@@ -48,12 +49,100 @@
 					  	</div>
 					</div>
 					<div class="col-4">
-						<?= $this->Form->submit('Prüfen', ['class' => 'btn pl-3 pr-3 mt-3 col-12 text-white float-right', 'style' => 'background-color: #e15236']); ?>
+<!-- 						<?= $this->Html->control('', ['type' => 'hidden', 'name' => 'UserID', 'value' => 'step1']);?> -->
+						<?= $this->Form->submit('Prüfen', [
+							'class' => 'btn pl-3 pr-3 mt-3 col-12 text-white float-right', 
+							'style' => 'background-color: #e15236', 
+							'name' => 'step']
+						);?>
 					</div>
 				</div>
-				<?= $this->Form->end(); ?>
 			</div>
 		</div>
-		
 	</div>
 </div>
+<?php if(!empty($data)): ?>
+<div class="container mt-4 mb-4 pt-2 border-top">
+	<div class="row">
+		<div class="col-12">
+			<h3 class="text-center mb-0">
+				<?php switch ($data['step']) {
+					case 'step1':
+						echo "Verfügbarkeit wird geprüft";
+						$submitStep = 'step2';
+						break;
+					case 'step2':
+						if(isset($available) && $available == true){
+							echo "Preis wird berechnet";
+						}else{
+							echo "Process hat beendet";
+						}
+						$submitStep = 'step3';
+						break;
+					case 'step3':
+						echo "Preis wurde berechnet";
+						$submitStep = 'end';
+						break;
+					default:
+						$submitStep = 'end';
+						echo "Ihre Anfrage wird bearbeitet";
+						break;
+				}?>
+				<?php $accesories_show = $data['step'] == 'step1' || ($data['step'] == 'step2' && isset($available) && $available == true) ?>
+				<?php if($accesories_show): ?>
+					<div class="lds-ellipsis" style="vertical-align: middle;">
+						<div></div>
+						<div></div>
+						<div></div>
+						<div></div>
+					</div>
+				<?php else: ?>
+					<i class="fas fa-check text-success fa-lg" style="text-shadow: 5px 5px 5px #c5efcf"></i>
+				<?php endif; ?>
+			</h3>
+			<h5 class="text-center">
+				<?= $this->Form->submit($accesories_show ? 'weiter' : 'fertig', [
+					'class' => 'btn-link btn text-info', 
+					'name' => $submitStep]
+				);?>
+			</h5>
+		</div>
+		<?php if($data['step'] == 'step2' || $data['step'] == 'step3'): ?>
+			<div class="col-6 p-3 border-right">
+				<?php if(isset($available) && $available == true): ?>
+					<span class="d-block">Apartment in Zeitraum von <b>2019-01-01</b> bis <b>2019-01-05</b> ist frei<i class="fas fa-check text-success ml-2"></i></span>
+				<?php else:?>
+					<span class="d-block">Apartment ist in dem Zeitraum ausgebucht<i class="fas fa-times text-danger ml-2"></i></span>
+				<?php endif;?>
+			</div>
+		<?php endif; ?>
+		<?php if($data['step'] == 'step3'): ?>
+			<div class="col-6 p-3">
+				<table class="table">
+					<tbody>
+						<tr>
+							<td class="border-0">2018-01-01</td>
+							<td class="border-0">€56</td>
+						</tr>
+						<tr>
+							<td>2018-01-02</td>
+							<td>€64</td>
+						</tr>
+						<tr>
+							<td>2018-01-03</td>
+							<td>€52</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="text-right">
+					<span class="font-weight-bold">Gesamtpreis €162</span>
+					<button class="btn btn-warning ml-2">OK</button>
+				</div>
+				
+			</div>
+		<?php endif; ?>
+	</div>
+</div>
+<?php endif; ?>
+
+<?= $this->Form->end(); ?>
