@@ -44,8 +44,8 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="">An- und Abreisedatum</span>
 							</div>
-						  	<input type="text" class="form-control text-center bg-white" name="from" id="from-date" value="<?= empty($data) ? '' : $data['to'] ?>" readonly="">
-						  	<input type="text" class="form-control text-center bg-white" name="to" id="to-date" value="<?= empty($data) ? '' : $data['from'] ?>" readonly="">
+						  	<input type="text" class="form-control text-center bg-white" name="from" id="from-date" value="<?= empty($data) ? '' : $data['from'] ?>" readonly="">
+						  	<input type="text" class="form-control text-center bg-white" name="to" id="to-date" value="<?= empty($data) ? '' : $data['to'] ?>" readonly="">
 					  	</div>
 					</div>
 					<div class="col-4">
@@ -110,7 +110,7 @@
 		<?php if($data['step'] == 'step2' || $data['step'] == 'step3'): ?>
 			<div class="col-6 p-3 border-right">
 				<?php if(isset($available) && $available == true): ?>
-					<span class="d-block">Apartment in Zeitraum von <b>2019-01-01</b> bis <b>2019-01-05</b> ist frei<i class="fas fa-check text-success ml-2"></i></span>
+					<span class="d-block">Apartment in Zeitraum von <b><?= $data['from'] ?></b> bis <b><?= $data['to'] ?></b> ist frei<i class="fas fa-check text-success ml-2"></i></span>
 				<?php else:?>
 					<span class="d-block">Apartment ist in dem Zeitraum ausgebucht<i class="fas fa-times text-danger ml-2"></i></span>
 				<?php endif;?>
