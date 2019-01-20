@@ -14,5 +14,15 @@ In dieser Dokumentation ist beschrieben, wie wir das Process der Apartment-Reser
    * Git als Version Control System
    * Bootstrap, Fontawesome und GoogleFonts für das Design 
     
-Das Model wurde in Camunda Modeler gemacht. Dies besteht aus zwei Services (extern implementiert), einem DMN (extern implementiert), einem UserTask (wird durch API Aufruf erledigt) und einem SendTask (extern implementiert mit javax.mail). 
+Das Model wurde in Camunda Modeler gemacht. Dies besteht aus zwei Services (extern implementiert), einem DMN (extern implementiert), einem UserTask (wird durch API Aufruf erledigt) und einem SendTask (extern implementiert mit javax.mail).
 ![Image of BPMN](docs/bpmn.PNG)
+
+# Vorprocess
+
+![Image of BPMN](docs/start.web.PNG)
+
+Auf der Startseite befinden sich mehrere Apartments. Beim Klicken auf eins davon landet man auf **/apartment/:id**. Hier sind weitere Informationen angezeigt, wie z.B. Anbieter, Preis und weiteres. Unten links muss man einen Zeitraum auswählen, für welchen man das Apartment reservieren möchte. 
+
+![Image of BPMN](docs/page.web.PNG)
+
+Beim Klicken auf das Button **Prüfen**, wird eine API Anfrage (/engine-rest/process-definition/:definition_key/start') an Camunda Engine gesendet und es wird als RequestBody ein JSON Objekt übergeben, welches ApartmentID und Von- und Bis-Datums enthält. 
