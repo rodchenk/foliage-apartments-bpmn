@@ -11,7 +11,7 @@ In dieser Dokumentation ist beschrieben, wie wir das Process der Apartment-Reser
    * Google Gson https://github.com/google/gson
    * RestAPI für Feiertage https://feiertage-api.de
    * J2EE, Java SE 1.8 https://www.oracle.com/technetwork/java/javaee/overview/
-   * Git als Version Control System
+   * Git als Version Control System https://github.com/
    * Bootstrap, Fontawesome und GoogleFonts für das Design 
     
 # Modellierung. Camunda
