@@ -55,7 +55,14 @@ class ApartmentsController extends AppController{
      * @todo Refactor mit unterer Methode
      */
     private function getFaktorWorkerResult(){
-        //todo
+        $camunda = $this->request->session()->read('camunda');
+        $url = 'http://localhost:8080/engine-rest/history/variable-instance?variableName=Faktor&processInstanceIdIn=' . $camunda->id;
+
+        $content = file_get_contents($url, true);
+
+        $json = json_decode($content);
+        $factors = $json[0]->name == 'Faktor' ? $json[0]->value : false;
+        $this->set('factors', $factors);
     }
 
     /**
@@ -97,7 +104,7 @@ class ApartmentsController extends AppController{
         ];
 
         $data_string = json_encode($dataJSON);
-        
+
         $definition_key = 'foliage_apartments:1:6fae56a5-1c18-11e9-82f8-0250f2000001';
         $curl_req = curl_init();
         curl_setopt($curl_req, CURLOPT_URL, 'http://localhost:8080/engine-rest/process-definition/'.$definition_key.'/start');
