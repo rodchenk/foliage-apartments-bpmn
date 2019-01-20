@@ -26,3 +26,7 @@ Auf der Startseite befinden sich mehrere Apartments. Beim Klicken auf eins davon
 ![Image of BPMN](docs/page.web.PNG)
 
 Beim Klicken auf das Button **Prüfen**, wird eine API Anfrage (/engine-rest/process-definition/:definition_key/start') an Camunda Engine gesendet und es wird als RequestBody ein JSON Objekt übergeben, welches ApartmentID und Von- und Bis-Datums enthält. 
+Das DefinitionKey wird beim Deployen des Models generiert. Diese und alle weiteren API Anfragen werden aus Sicherheitsgründen ausschliesslich im BackEnd durchgeführt und bearbeitet. FrontEnd seitig werden nur entsprechende Variablen gesendet, die dann im BackEnd validiert werden und entsprechende Funktionen aufrufen. 
+
+# Schritt 1. Availality Checker Service
+
