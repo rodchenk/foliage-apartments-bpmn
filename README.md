@@ -17,7 +17,7 @@ In dieser Dokumentation ist beschrieben, wie wir das Process der Apartment-Reser
 Das Model wurde in Camunda Modeler gemacht. Dies besteht aus zwei Services (extern implementiert), einem DMN (extern implementiert), einem UserTask (wird durch API Aufruf erledigt) und einem SendTask (extern implementiert mit javax.mail).
 ![Image of BPMN](docs/bpmn.PNG)
 
-# Vorprocess
+# Vorprocess. Apartmentauswahl
 
 ![Image of BPMN](docs/start.web.PNG)
 
