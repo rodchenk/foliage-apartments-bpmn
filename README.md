@@ -71,3 +71,6 @@ Die Wochenendetage werden einfach mit Vergleich auf Calendar.Saturday und Calend
 ![Image of BPMN](docs/step2.data.camunda.PNG)
 
 # Schritt 3. Calculate Factor Service
+
+Das dritte Service enthält Business Rule Task. Das wurde mit DMN modelliert und als .xml gespeichert, um es für Java lesbar zu machen. Die Tabelle sieht so aus:
+![Image of BPMN](docs/step2.data.camunda.PNG)
