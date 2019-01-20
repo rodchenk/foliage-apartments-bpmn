@@ -1,4 +1,4 @@
-# BPMN Implementierung am Beispiel von Reservierung von Apartment
+# BPMN Implementierung - Reservierung von Apartment
 
 In dieser Dokumentation ist beschrieben, wie wir das Process der Apartment-Reservierung implementiert haben. Als Beispiel haben wir eigene Webseite (foliage Apartment) entwickelt, wo die Gastgeber Ihre Apartments anbieten. Bei der Implementierung des Processes wurden die folgenden Technologien verwendet:
 
