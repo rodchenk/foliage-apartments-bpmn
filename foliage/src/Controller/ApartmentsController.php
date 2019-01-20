@@ -61,8 +61,21 @@ class ApartmentsController extends AppController{
         $content = file_get_contents($url, true);
 
         $json = json_decode($content);
-        $factors = $json[0]->name == 'Faktor' ? $json[0]->value : false;
+        $f = $json[0]->name == 'Faktor' ? $json[0]->value : false;
+        $factors = $this->getFactorsAsArray($f);
         $this->set('factors', $factors);
+    }
+
+    /**
+     * @author Mischa
+     * @param $f stdClass with factors ans dates
+     * @property parse date to array
+     * @todo cut last day (issue)
+     */
+    private function getFactorsAsArray($f = null){
+        $a = json_decode(json_encode($f), true);
+        array_pop($a);
+        return $a;
     }
 
     /**

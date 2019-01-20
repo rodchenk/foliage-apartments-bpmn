@@ -120,23 +120,20 @@
 			<div class="col-6 p-3">
 				<table class="table">
 					<tbody>
-						<tr>
-							<td class="border-0">2018-01-01</td>
-							<td class="border-0">€56</td>
-						</tr>
-						<tr>
-							<td>2018-01-02</td>
-							<td>€64</td>
-						</tr>
-						<tr>
-							<td>2018-01-03</td>
-							<td>€52</td>
-						</tr>
+						<?php $sum = 0; ?>
+						<?php foreach ($factors as $key => $value): ?>
+							<?php $price = $value * $apartment->Price; $sum += $price; ?>
+							<tr>
+								<td class="border-0"><?= $key ?></td>
+								<td class="border-0">€<?= number_format($price, 2, ',', ' ') ?></td>
+							</tr>
+						<?php endforeach; ?>
 					</tbody>
 				</table>
 				<div class="text-right">
-					<span class="font-weight-bold">Gesamtpreis €162</span>
-					<button class="btn btn-warning ml-2">OK</button>
+					<span class="font-weight-bold">Gesamtpreis €<?= number_format($sum, 2, ',', ' ') ?></span>
+					<button class="btn btn-warning ml-2 pl-3 pr-3">OK</button>
+					<button class="btn btn-outline-danger"><i class="fas fa-times"></i></button>
 				</div>
 				
 			</div>
