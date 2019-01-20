@@ -58,4 +58,16 @@ GET /engine-rest/history/variable-instance?variableName=available&processInstanc
 # Schritt 2. Day Checker Service
 
 Danach wird das zweite Service Day Checker (auch entweder über cmd oder bat-datei **start_2_foliageDayChecker.bat**) gestartet. 
+
 ![Image of BPMN](docs/step11.web.PNG)
+
+Dieses Service prüft den von Benutzer angegebenen Zeitraum auf zwei Eigenschaften: Feiertag und Wochenendetag. Für die erste Eigenschaft wird eine externe [RestAPI](https://feiertage-api.de) verwendet:
+```
+GET https://feiertage-api.de/api/?jahr=:year
+```
+Die Wochenendetage werden einfach mit Vergleich auf Calendar.Saturday und Calendar.Sunday geprüft. Schliesslich wird ein HashMap erstellt und es mit den Daten befühlt.
+
+![Image of BPMN](docs/step2.camunda.PNG)
+![Image of BPMN](docs/step2.data.camunda.PNG)
+
+# Schritt 3. Calculate Factor Service
