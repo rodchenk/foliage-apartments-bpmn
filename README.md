@@ -65,6 +65,7 @@ Dieses Service prüft den von Benutzer angegebenen Zeitraum auf zwei Eigenschaft
 ```
 GET https://feiertage-api.de/api/?jahr={year}
 ```
+Alle Tage werden in einer for-Schleife geprüft. Die API liefert Datum und Beschreibung eines Feiertages wenn es solches am jeweiligen Tag gibt.
 Die Wochenendetage werden einfach mit Vergleich auf Calendar.Saturday und Calendar.Sunday geprüft. Schliesslich wird ein HashMap erstellt und es mit den Daten befühlt.
 
 ![Image of BPMN](docs/step2.camunda.PNG)
