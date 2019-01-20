@@ -131,3 +131,5 @@ Letztendlich wird das Letzte Service gestartet (wie immer, entsweder über cmd o
 Nachdem E-Mail versendet wurde, wird das Process **erfolgreich** beendet. Notifier Service enthält externe Bibiliotheken, die mithilfe von Maven Dependencies eingebunden werden. Mit diesen Bibliotheken wird die Verbindung mit Mail-Server über SMPT hergestellt und die E-Mail gesendet. 
 Das ganze Process kann man mit und ohne Benutzeroberfläche steuern und ausführen.
 <hr>
+*foliage-Team im Rahmen der Veranstaltung Anpassung von IT-Diensten bei Frau Prof. Meister*
+*Dokumentiert von Rodchenkov M.*
