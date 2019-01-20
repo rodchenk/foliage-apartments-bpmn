@@ -42,7 +42,7 @@
 					<div class="col-8">
 						<div class="input-group mt-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text" id="">An- und Abreisedatum</span>
+								<span class="input-group-text" id="">Ein- und Abreisedatum</span>
 							</div>
 						  	<input type="text" class="form-control text-center bg-white" name="from" id="from-date" value="<?= empty($data) ? '' : $data['from'] ?>" readonly="">
 						  	<input type="text" class="form-control text-center bg-white" name="to" id="to-date" value="<?= empty($data) ? '' : $data['to'] ?>" readonly="">
