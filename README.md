@@ -32,7 +32,7 @@ Auf der Startseite befinden sich mehrere Apartments. Beim Klicken auf eins davon
 
 Beim Klicken auf das Button **Prüfen**, wird eine API Anfrage
 ```
-POST /engine-rest/process-definition/:definition_key/start
+POST /engine-rest/process-definition/{definition_key}/start
 ```
 an Camunda Engine gesendet und es wird als RequestBody ein JSON Objekt übergeben, welches ApartmentID und Von- und Bis-Datums enthält. 
 Das DefinitionKey wird beim Deployen des Models generiert. Diese und alle weiteren API Anfragen werden aus Sicherheitsgründen ausschliesslich im BackEnd durchgeführt und bearbeitet. FrontEnd seitig werden nur entsprechende Variablen gesendet, die dann im BackEnd validiert werden und entsprechende Funktionen aufrufen. 
@@ -52,7 +52,7 @@ Wenn das Process gestartet ist, erscheint ein entsprechendes Label (in diesem Fa
 Als Antwort von camunda-engine API beim Starten des Process bekommt die Applikationen alle notwendigen Daten inkl. Process ID und Definition Key. Diese Daten werden für den späteren Verbrauch in Cookies gespeichert.
 Wenn das Availability Checker Service ein false (d.h. Apartment ist nicht frei) zurückgeliefert hat, wird das Process gleich nach dem Gateway beendet. Das Gateway bekommt eine Variable ${available} und falls sie **true** ist, geht das Process weiter, ansonsten (default flow) wird es beendet und der Benutzer wird über die Nicht-Verfügbarkeit des Apartments benachrichtigt. Diese Daten bekommt die App durch den folgenden API Aufruf
 ```
-GET /engine-rest/history/variable-instance?variableName=available&processInstanceIdIn=:id;
+GET /engine-rest/history/variable-instance?variableName=available&processInstanceIdIn={id}
 ```
 
 # Schritt 2. Day Checker Service
@@ -63,7 +63,7 @@ Danach wird das zweite Service Day Checker (auch entweder über cmd oder bat-dat
 
 Dieses Service prüft den von Benutzer angegebenen Zeitraum auf zwei Eigenschaften: Feiertag und Wochenendetag. Für die erste Eigenschaft wird eine externe [RestAPI](https://feiertage-api.de) verwendet:
 ```
-GET https://feiertage-api.de/api/?jahr=:year
+GET https://feiertage-api.de/api/?jahr={year}
 ```
 Die Wochenendetage werden einfach mit Vergleich auf Calendar.Saturday und Calendar.Sunday geprüft. Schliesslich wird ein HashMap erstellt und es mit den Daten befühlt.
 
@@ -97,4 +97,27 @@ factors: {
 }
 ```
 
+# Schritt 4. User's Agreement
+
+![Image of BPMN](docs/step3.web.PNG)
+
+Nachdem das dritte Service durchgelaufen ist, bekommt die Applikation eine Liste von Faktoren. Das geschieht über den API Aufruf
+```
+GET /engine-rest/history/variable-instance?variableName=Faktor&processInstanceIdIn={id}
+```
+
 ![Image of BPMN](docs/step3.camunda.PNG)
+
+Auf diesem Schritt muss der Benutzer die Entscheidung treffen, ob er mit dem Preis einverstanden ist und das Apartment immer noch reservieren möchte. Danach muss er auf das entsprechende Button klicken. Das Button submitet die Form und es triggert noch ein API Aufruf 
+
+```
+GET /engine-rest/task?processInstanceId={id}
+```
+das liefert uns eine Liste von allen Tasks mit eingegebener ID. Wir suchen hier das richtige User Task mit dem Namen **Bestätigung von user** und speicher die TaskID. Dann könen wir die nächste Anfrage senden:
+```
+POST http://localhost:8080/engine-rest/task/{id}/complete
+```
+Als RequestBody wird eine boolische Variable ${ok} übergeben. Die Variable entnimmt die Applikation aus dem Button, welches geklickt wurde. Danach entscheidet das Gateway, ob das Process weitergeht oder gleich beendet wird. Wenn ${ok == true} geht das Process an den letzten Schritt.
+
+# Schritt 5. Notifier
+
