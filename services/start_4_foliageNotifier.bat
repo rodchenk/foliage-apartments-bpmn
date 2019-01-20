@@ -1,0 +1,1 @@
+java -cp foliage_notifier/target/notifier-0.0.1-SNAPSHOT.jar notify.NotifyFoliageTask
