@@ -30,7 +30,11 @@ Auf der Startseite befinden sich mehrere Apartments. Beim Klicken auf eins davon
 
 ![Image of BPMN](docs/page.web.PNG)
 
-Beim Klicken auf das Button **Prüfen**, wird eine API Anfrage (/engine-rest/process-definition/:definition_key/start') an Camunda Engine gesendet und es wird als RequestBody ein JSON Objekt übergeben, welches ApartmentID und Von- und Bis-Datums enthält. 
+Beim Klicken auf das Button **Prüfen**, wird eine API Anfrage
+```
+POST /engine-rest/process-definition/:definition_key/start
+```
+an Camunda Engine gesendet und es wird als RequestBody ein JSON Objekt übergeben, welches ApartmentID und Von- und Bis-Datums enthält. 
 Das DefinitionKey wird beim Deployen des Models generiert. Diese und alle weiteren API Anfragen werden aus Sicherheitsgründen ausschliesslich im BackEnd durchgeführt und bearbeitet. FrontEnd seitig werden nur entsprechende Variablen gesendet, die dann im BackEnd validiert werden und entsprechende Funktionen aufrufen. 
 
 # Schritt 1. Availality Checker Service
@@ -45,5 +49,13 @@ Wenn das Process gestartet ist, erscheint ein entsprechendes Label (in diesem Fa
 
 ![Image of BPMN](docs/step1.camunda.PNG)
 
+Als Antwort von camunda-engine API beim Starten des Process bekommt die Applikationen alle notwendigen Daten inkl. Process ID und Definition Key. Diese Daten werden für den späteren Verbrauch in Cookies gespeichert.
+Wenn das Availability Checker Service ein false (d.h. Apartment ist nicht frei) zurückgeliefert hat, wird das Process gleich nach dem Gateway beendet. Das Gateway bekommt eine Variable ${available} und falls sie **true** ist, geht das Process weiter, ansonsten (default flow) wird es beendet und der Benutzer wird über die Nicht-Verfügbarkeit des Apartments benachrichtigt. Diese Daten bekommt die App durch den folgenden API Aufruf
+```
+GET /engine-rest/history/variable-instance?variableName=available&processInstanceIdIn=:id;
+```
+
 # Schritt 2. Day Checker Service
 
+Danach wird das zweite Service Day Checker (auch entweder über cmd oder bat-datei **start_2_foliageDayChecker.bat**) gestartet. 
+![Image of BPMN](docs/step11.web.PNG)
