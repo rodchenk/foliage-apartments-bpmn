@@ -35,15 +35,56 @@ class ApartmentsController extends AppController{
                 $data['step'] = 'step3';
                 $this->getAvailabilityWorkerResult();
                 $this->getFaktorWorkerResult();
+            }elseif(isset($data['ok']) || isset($data['cancel'])){
+                $ok = isset($data['ok']) ? true : false;
+                $data['step'] = 'step3';
+                $this->getAvailabilityWorkerResult();
+                $this->getFaktorWorkerResult();
+                $this->completeUserTask($ok);
             }
             
             $this->set('data', $data);
         }
+        /**/
+
         /* allgemeine Logik START*/
         $this->viewBuilder()->setLayout('main');
         $this->viewBuilder()->setTemplate('show');
         $this->set('apartment', $this->Apartments->get($id, ['contain' => ['Users']]));
         /* allgemeine Logik END*/
+    }
+
+    private function completeUserTask($ok = false){
+        $data = [
+            "variables" => [
+                "ok" => [
+                    "value" => $ok, 
+                    "type" => "Boolean"
+                ]
+            ]
+        ];
+
+        $camunda = $this->request->session()->read('camunda');
+        $url_to_get_task_id = 'http://localhost:8080/engine-rest/task?processInstanceId='.$camunda->id;
+        
+        $content = file_get_contents($url_to_get_task_id, true);
+        $json = json_decode($content);
+        $task_id = $json[0]->id;
+
+        /**/
+        $json = json_encode($data);
+        $url = 'http://localhost:8080/engine-rest/task/' .$task_id. '/complete';
+
+        $curl_req = curl_init();
+        curl_setopt($curl_req, CURLOPT_URL, $url);
+        curl_setopt($curl_req, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl_req, CURLOPT_POSTFIELDS, $json);
+        curl_setopt($curl_req, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl_req, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Content-Length: ' . strlen($json)]);
+
+        $result = curl_exec($curl_req);
+        $this->set('user_task', $ok);
+        curl_close($curl_req);
     }
 
     /**
@@ -95,7 +136,8 @@ class ApartmentsController extends AppController{
     }
 
     /**
-     * @author mischa
+     * @author Mischa
+     * @param Starts the main process
      * @param $data array with the data to be sent to camunda engine
      */
     private function sendApiRequest($data){

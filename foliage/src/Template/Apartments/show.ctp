@@ -61,7 +61,17 @@
 		</div>
 	</div>
 </div>
-<?php if(!empty($data)): ?>
+<?php if(isset($user_task)): ?>
+	<div class="p-3 col-12 text-center mt-4 ">
+		<?php if($user_task == true): ?>
+			<h4 class="text-dark">Der Gastgeber wird benachrichtigt <i class="fas fa-check"></i></h4>
+		<?php else: ?>
+			<h4 class="text-danger">Process wird abgebrochen <i class="fas fa-times"></i></h4>
+		<?php endif; ?>
+	</div>
+<?php endif; ?>
+
+<?php if(!empty($data) && !isset($user_task)): ?>
 <div class="container mt-4 mb-4 pt-2 border-top">
 	<div class="row">
 		<div class="col-12">
@@ -132,10 +142,9 @@
 				</table>
 				<div class="text-right">
 					<span class="font-weight-bold">Gesamtpreis €<?= number_format($sum, 2, ',', ' ') ?></span>
-					<button class="btn btn-warning ml-2 pl-3 pr-3">OK</button>
-					<button class="btn btn-outline-danger"><i class="fas fa-times"></i></button>
+					<button class="btn btn-warning ml-2 pl-3 pr-3" type="submit" name="ok">OK</button>
+					<button class="btn btn-outline-danger" type="submit" name="cancel"><i class="fas fa-times"></i></button>
 				</div>
-				
 			</div>
 		<?php endif; ?>
 	</div>
