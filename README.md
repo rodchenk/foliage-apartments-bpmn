@@ -34,12 +34,12 @@ Beim Klicken auf das Button **Prüfen**, wird eine API Anfrage
 ```
 POST /engine-rest/process-definition/{definition_key}/start
 ```
-an Camunda Engine gesendet und es wird als RequestBody ein JSON Objekt übergeben, welches ApartmentID und Von- und Bis-Datums enthält. 
-Das DefinitionKey wird beim Deployen des Models generiert. Diese und alle weiteren API Anfragen werden aus Sicherheitsgründen ausschliesslich im BackEnd durchgeführt und bearbeitet. FrontEnd seitig werden nur entsprechende Variablen gesendet, die dann im BackEnd validiert werden und entsprechende Funktionen aufrufen. 
+an Camunda Engine gesendet und Process wird gestartet. Es wird als RequestBody ein JSON Objekt übergeben, welches ApartmentID und Von- und Bis-Datums enthält. 
+Das DefinitionKey, welches in API-Anfrage übergeben wird, wird beim Deployen des Models generiert. Diese und alle weiteren API Anfragen werden aus Sicherheitsgründen ausschließlich im Backend durchgeführt und bearbeitet. Frontendseitig werden nur entsprechende Variablen gesendet, die im Backend validiert werden und dann entsprechende Funktionen aufrufen. 
 
 # Schritt 1. Availality Checker Service
 
-Nachdem das Process gestartet wurde, wird das erste Service mit externen Implementiereung aufgerufen. Das kann entweder über das Starten von /service/start_1_foliageAvailability.bat oder über cmd Befehl
+Nachdem das Process gestartet wurde, wird das erste Service mit der externen Implementiereung aufgerufen. Das kann entweder über das Starten von **/service/start_1_foliageAvailability.bat** oder über CMD Befehl:
 ```
   java -cp foliage_availability/target/apartments-availability-0.0.1-SNAPSHOT.jar availability.CheckWorker
 ```
