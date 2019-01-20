@@ -75,3 +75,26 @@ Die Wochenendetage werden einfach mit Vergleich auf Calendar.Saturday und Calend
 Das dritte Service enthält Business Rule Task. Das wurde mit DMN modelliert und als .xml gespeichert, um es für Java lesbar zu machen. Die Tabelle sieht so aus:
 
 ![Image of BPMN](docs/dm.PNG)
+
+Das Process wird wieder über cmd oder durch Starten von **start_3_foliageCalcFactor.bat** gestartet. Weil wir auf diesem Schritt ein Map (**HashMap<String, Map<String, Boolean>>**) von Daten haben, welches folgendermaßen aussieht:
+```
+days: {
+  2018-01-01: {
+    holiday: true,
+    weekend: false
+  },
+  2018-01-02: {
+    holiday: false,
+    weekend: false
+  }
+}
+```
+müssen wir die einzelnen Datensätze durch for-Schleife laufen lassen, in der das DMN ausgeführt wird. In jeder Iteration wird aus Holiday(boolean) und Weekend(boolean) ein Double-Wert berechnet. In der for-Schleife werden Daten in ein neues Map gespeichert (**Map<String, Double>**). Als Antwort von Service bekommt camunda-engine eine Variable, die folgendermaßen aussieht:
+```
+factors: {
+  2018-01-01: 1.2,
+  2018-01-02: 1.0
+}
+```
+
+![Image of BPMN](docs/step3.camunda.PNG)
