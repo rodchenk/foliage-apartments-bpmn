@@ -118,6 +118,14 @@ das liefert uns eine Liste von allen Tasks mit eingegebener ID. Wir suchen hier 
 POST http://localhost:8080/engine-rest/task/{id}/complete
 ```
 Als RequestBody wird eine boolische Variable ${ok} übergeben. Die Variable entnimmt die Applikation aus dem Button, welches geklickt wurde. Danach entscheidet das Gateway, ob das Process weitergeht oder gleich beendet wird. Wenn ${ok == true} geht das Process an den letzten Schritt.
+Der Benutzer bekommt nach dem Klick eine entspechende Benachrichtigung.
+
+![Image of BPMN](docs/step4.web.PNG)
 
 # Schritt 5. Notifier
 
+Letztendlich wird das Letzte Service gestartet (wie immer, entsweder über cmd oder durch Started von **start_4_foliageNotifier.bat**). Dieses Service macht nichts anderes als sendet eine E-Mail an Gastgeber. Die E-Mail enthält den Zeitraum und das Link zum Apartment.
+
+![Image of BPMN](docs/step5.web.PNG)
+
+Nachdem E-Mail versendet wurde, wird das Process **erfolgreich** beendet.
