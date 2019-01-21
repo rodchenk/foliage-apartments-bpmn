@@ -126,6 +126,8 @@ Der Benutzer bekommt nach dem Klick eine entspechende Benachrichtigung.
 
 # Schritt 5. Notifier
 
+![Image of BPMN](docs/step4.camunda.PNG)
+
 Letztendlich wird das Letzte Service gestartet (wie immer, entweder über cmd oder durch Started von **start_4_foliageNotifier.bat**). Dieses Service macht nichts anderes als sendet eine E-Mail an Gastgeber. Die E-Mail enthält den Zeitraum und das Link zum Apartment.
 
 ![Image of BPMN](docs/step5.web.PNG)
