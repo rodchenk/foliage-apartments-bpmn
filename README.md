@@ -1,6 +1,6 @@
 # BPMN Implementierung - Reservierung von Apartment
 
-In dieser Dokumentation ist beschrieben, wie wir das Process der Apartment-Reservierung implementiert haben. Als Beispiel haben wir eigene Webseite (foliage Apartment) entwickelt, wo die Gastgeber Ihre Apartments anbieten. Bei der Implementierung des Processes wurden die folgenden Technologien verwendet:
+In dieser Dokumentation ist beschrieben, wie wir das Process der Apartment-Reservierung implementiert haben. Als Beispiel haben wir eigene Webseite (foliage Apartment) entwickelt, wo die Gastgeber Ihre Apartments anbieten. Bei der Implementierung des Processes wurden  folgende Technologien verwendet:
 
    * Apache WebServer https://httpd.apache.org/
    * Tomcat WebServer http://tomcat.apache.org/
