@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_0a3turl" name="DRD" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="FaktorBerechnen" name="Faktor berechnen">
+    <decisionTable id="decisionTable_1">
+      <input id="input_1" label="Wochenendetag" camunda:inputVariable="Weekend">
+        <inputExpression id="inputExpression_1" typeRef="boolean">
+          <text>Weekend</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0gcwgw7" label="Feiertag" camunda:inputVariable="Holiday">
+        <inputExpression id="LiteralExpression_0nmlezv" typeRef="boolean">
+          <text>Holiday</text>
+        </inputExpression>
+      </input>
+      <output id="output_1" label="Faktor" name="Faktor" typeRef="double" />
+      <rule id="DecisionRule_025zecc">
+        <description>kein besonderer Tag</description>
+        <inputEntry id="UnaryTests_1c5ojan">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08ld3av">
+          <text>false</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0xbxu9x">
+          <text>1.00</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0paoaho">
+        <description>ein Wochenendetag</description>
+        <inputEntry id="UnaryTests_0sjl4x9">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_07xd8ge">
+          <text>false</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_18md8tv">
+          <text>1.10</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1d8umel">
+        <description>ein Feiertag</description>
+        <inputEntry id="UnaryTests_108kpn7">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0kbv29v">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0fljrpz">
+          <text>1.25</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_02dnldu">
+        <description>ein Feiertag und Wochenendetag</description>
+        <inputEntry id="UnaryTests_032sfnz">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0h6hlsj">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1ysejp7">
+          <text>1.40</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>
