@@ -1,6 +1,6 @@
 # BPMN Implementierung - Reservierung von Apartment
 
-In dieser Dokumentation ist beschrieben, wie wir das Process der Apartment-Reservierung implementiert haben. Als Beispiel haben wir eigene Webseite (foliage Apartment) entwickelt, wo die Gastgeber Ihre Apartments anbieten. Bei der Implementierung des Processes wurden die folgenden Technologien verwendet:
+In dieser Dokumentation ist beschrieben, wie wir das Process der Apartment-Reservierung implementiert haben. Als Beispiel haben wir eigene Webseite (foliage Apartment) entwickelt, wo die Gastgeber Ihre Apartments anbieten. Bei der Implementierung des Processes wurden  folgende Technologien verwendet:
 
    * Apache WebServer https://httpd.apache.org/
    * Tomcat WebServer http://tomcat.apache.org/
@@ -13,6 +13,7 @@ In dieser Dokumentation ist beschrieben, wie wir das Process der Apartment-Reser
    * J2EE, Java SE 1.8 https://www.oracle.com/technetwork/java/javaee/overview/
    * Git als Version Control System https://github.com/
    * Bootstrap, Fontawesome und GoogleFonts für das Design 
+   * Date Range Picker - JavaScript http://www.daterangepicker.com/
     
 # Modellierung. Camunda
 Das Model wurde in Camunda Modeler gemacht. Dies besteht aus zwei Services (extern implementiert), einem DMN (extern implementiert), einem UserTask (wird durch API Aufruf erledigt) und einem SendTask (extern implementiert mit javax.mail).
@@ -93,8 +94,8 @@ days: {
 müssen wir die einzelnen Datensätze durch for-Schleife laufen lassen, in der das DMN ausgeführt wird. In jeder Iteration wird aus Holiday(boolean) und Weekend(boolean) ein Double-Wert berechnet. In der for-Schleife werden Daten in ein neues Map gespeichert (**Map<String, Double>**). Als Antwort von Service bekommt camunda-engine eine Variable, die folgendermaßen aussieht:
 ```
 factors: {
-  2018-01-01: 1.2,
-  2018-01-02: 1.0
+  2018-01-01: 1.25,
+  2018-01-02: 1.00
 }
 ```
 
@@ -124,6 +125,8 @@ Der Benutzer bekommt nach dem Klick eine entspechende Benachrichtigung.
 ![Image of BPMN](docs/step4.web.PNG)
 
 # Schritt 5. Notifier
+
+![Image of BPMN](docs/step4.camunda.PNG)
 
 Letztendlich wird das Letzte Service gestartet (wie immer, entweder über cmd oder durch Started von **start_4_foliageNotifier.bat**). Dieses Service macht nichts anderes als sendet eine E-Mail an Gastgeber. Die E-Mail enthält den Zeitraum und das Link zum Apartment.
 
